@@ -1,0 +1,47 @@
+{
+  "name": "forge-launcher",
+  "version": "0.1.0",
+  "description": "A themed, modular launcher for the Forge workflow with Diablo-style UI.",
+  "main": "src/main.js",
+  "scripts": {
+    "dist:win": "electron-builder --win",
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win"
+  },
+  "author": "Cain 🩸 <cain@cain.tail17d57c.ts.net>",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "files": ["src/**", "assets/**", "package.json"],
+  "build": {
+    "icon": "assets/icon-256.png",
+    "appId": "com.vvardog.forgelauncher",
+    "productName": "Forge Launcher",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "publisherName": "VVardog",
+      "icon": "assets/icon-256.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "Forge Launcher"
+    },
+    "directories": {
+      "output": "dist"
+    },
+    "linux": { "icon": "assets/icon-256.png" }
+    }
+}

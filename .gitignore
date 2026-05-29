@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+out/
+*.exe
+*.AppImage
+*.snap
+*.blockmap
+build.log
+.pnpm-store/

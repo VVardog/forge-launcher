@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Forge Launcher</title>
+  <style>
+    body { background:#111; color:#eee; font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
+    .container { text-align:center; }
+    h1 { font-size:2.5rem; margin-bottom:1rem; }
+    button { padding:0.5rem 1rem; font-size:1rem; background:#444; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+    button:hover { background:#555; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Forge Launcher</h1>
+    <p>Welcome to the Forge Launcher. Future features will appear here.</p>
+    <button id="testBtn">Test</button>
+  </div>
+  <script>
+    const { ipcRenderer } = require('electron');
+    document.getElementById('testBtn').addEventListener('click', () => {
+      ipcRenderer.send('test-message', 'Button clicked');
+    });
+  </script>
+</body>
+</html>

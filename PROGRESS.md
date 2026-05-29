@@ -1,5 +1,7 @@
 # Forge Launcher Progress
 
+- Fixed icon issue for Linux builds by generating a proper 256 px PNG and using it in `package.json`.
+
 **Current Status (2026-05-26)**
 - Repository initialized with a basic README.
 - Ideas and next steps captured in `memory/forge_launcher_ideas.md`.

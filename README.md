@@ -14,11 +14,13 @@ Create a powerful, customizable launcher that embodies creativity, collaboration
 
 ## Quick Start (Windows)
 ```
-# Download the installer (replace <VERSION> with latest)
-curl -L -o ForgeLauncher-Setup.exe "https://github.com/VVardog/forge-launcher/releases/download/v<VERSION>/ForgeLauncher%20Setup%20<VERSION>.exe"
+# Download the latest installer (replace <VERSION> with latest, e.g., 0.1.0)
+curl -L -o ForgeLauncher-Setup.exe "https://github.com/VVardog/forge-launcher/releases/download/v<VERSION>/Forge%20Launcher%20Setup%20<VERSION>.exe"
 # Run installer (silent)
 ForgeLauncher-Setup.exe /S
 ```
+
+*The installer (`Forge Launcher Setup <VERSION>.exe`) is built in the `dist/` directory after `npm run dist:win`. It includes a proper 256×256 icon and works via Wine on Linux for testing.*
 
 ## Quick Start (development)
 ```
