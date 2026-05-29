@@ -32,6 +32,8 @@ window.FORGE_CATALOG = [
     section: 'The Forge',
     blurb: 'Tools and dashboards.',
     items: [
+      { title: 'Kai Toolbox', desc: '⚡🗡️ 31-tool Windows repair suite — get latest', icon: '🧰', kind: 'external', url: 'https://github.com/VVardog/virt-kai-tools/releases/latest' },
+      { title: 'Kai Toolbox · Repo', desc: 'virt-kai-tools source & README', icon: '🗡️', kind: 'external', url: 'https://github.com/VVardog/virt-kai-tools' },
       { title: 'Forge HQ', desc: 'Fleet dashboard (cain)', icon: '🔥', kind: 'external', url: 'https://cain.tail17d57c.ts.net/' },
       { title: 'Grafana', desc: 'Metrics & graphs', icon: '📊', kind: 'external', url: 'https://cain.tail17d57c.ts.net/grafana/' },
       { title: 'Gateway UI', desc: 'OpenClaw control', icon: '🦞', kind: 'external', url: 'https://cain.tail17d57c.ts.net/better-gateway/' },
