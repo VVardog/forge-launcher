@@ -1,27 +1,204 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Forge Launcher</title>
-  <style>
-    body { background:#111; color:#eee; font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
-    .container { text-align:center; }
-    h1 { font-size:2.5rem; margin-bottom:1rem; }
-    button { padding:0.5rem 1rem; font-size:1rem; background:#444; color:#fff; border:none; border-radius:4px; cursor:pointer; }
-    button:hover { background:#555; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Forge Launcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0705; --bg2:#120c08; --panel:#17100b;
+    --ember:#ff6a1a; --ember2:#ff9d3c; --blood:#8b1a1a;
+    --gold:#d8a24a; --ash:#9b8b7a; --steel:#cbb89a;
+    --line:rgba(216,162,74,.22);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(1200px 700px at 50% -10%, #1c120a 0%, var(--bg) 60%, #050302 100%);
+    color:var(--steel); font-family:'Cinzel',serif; overflow:hidden;
+    user-select:none;
+  }
+  #embers{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
+
+  header{
+    padding:22px 34px 14px; text-align:center; position:relative;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(255,106,26,.06), transparent);
+  }
+  header h1{
+    font-family:'Cinzel Decorative',serif; font-weight:900;
+    font-size:34px; letter-spacing:3px;
+    color:var(--gold);
+    text-shadow:0 0 18px rgba(255,106,26,.55), 0 2px 0 #000;
+  }
+  header h1 .spark{color:var(--ember)}
+  header .sub{font-size:11px;letter-spacing:5px;color:var(--ash);margin-top:6px;text-transform:uppercase}
+
+  main{flex:1;overflow-y:auto;padding:26px 34px 90px}
+  main::-webkit-scrollbar{width:10px}
+  main::-webkit-scrollbar-thumb{background:linear-gradient(var(--ember),var(--blood));border-radius:6px}
+
+  .section{margin-bottom:30px}
+  .section h2{
+    font-family:'Cinzel Decorative',serif;font-size:15px;letter-spacing:2px;
+    color:var(--ember2);text-transform:uppercase;margin-bottom:3px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .section h2::before,.section h2::after{
+    content:'';height:1px;flex:0 0 26px;background:linear-gradient(90deg,transparent,var(--ember));
+  }
+  .section h2::after{flex:1;background:linear-gradient(90deg,var(--ember),transparent)}
+  .section .blurb{font-size:11px;color:var(--ash);margin:0 0 14px 38px;font-style:italic}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+
+  .tile{
+    position:relative;background:linear-gradient(160deg,var(--panel),#0d0907);
+    border:1px solid var(--line);border-radius:10px;padding:16px 16px 15px;
+    cursor:pointer;overflow:hidden;transition:transform .12s, box-shadow .25s, border-color .25s;
+  }
+  .tile::before{ /* rune corner glow */
+    content:'';position:absolute;inset:0;border-radius:10px;
+    background:radial-gradient(120px 80px at 100% 0%, rgba(255,106,26,.16), transparent 70%);
+    opacity:0;transition:opacity .25s;
+  }
+  .tile:hover{transform:translateY(-3px);border-color:var(--ember);
+    box-shadow:0 0 0 1px rgba(255,106,26,.4),0 12px 30px -10px rgba(255,106,26,.45),inset 0 0 30px rgba(255,106,26,.06)}
+  .tile:hover::before{opacity:1}
+  .tile:active{transform:translateY(0) scale(.985)}
+
+  .tile .ico{font-size:30px;line-height:1;filter:drop-shadow(0 0 8px rgba(255,106,26,.5))}
+  .tile .ttl{font-family:'Cinzel',serif;font-weight:600;font-size:16px;color:var(--steel);margin-top:10px}
+  .tile:hover .ttl{color:#fff;text-shadow:0 0 10px rgba(255,157,60,.6)}
+  .tile .desc{font-size:11px;color:var(--ash);margin-top:4px;line-height:1.45;font-family:'JetBrains Mono',monospace}
+  .tile .kindtag{position:absolute;top:11px;right:12px;font-size:8px;letter-spacing:1px;
+    color:var(--ash);border:1px solid var(--line);border-radius:4px;padding:2px 5px;
+    font-family:'JetBrains Mono',monospace;text-transform:uppercase;opacity:.7}
+
+  footer{
+    position:fixed;bottom:0;left:0;right:0;z-index:2;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:9px 22px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ash);
+    background:linear-gradient(180deg,transparent,rgba(5,3,2,.95));
+    border-top:1px solid var(--line);
+  }
+  footer .left{display:flex;gap:18px;align-items:center}
+  footer .dot{width:7px;height:7px;border-radius:50%;background:var(--ember);
+    box-shadow:0 0 8px var(--ember);display:inline-block;margin-right:6px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  footer button{background:none;border:1px solid var(--line);color:var(--ash);
+    font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:5px;cursor:pointer}
+  footer button:hover{border-color:var(--ember);color:var(--ember2)}
+
+  .toast{position:fixed;bottom:46px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--panel);border:1px solid var(--ember);border-radius:8px;padding:10px 18px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ember2);z-index:5;
+    box-shadow:0 0 26px rgba(255,106,26,.4);opacity:0;transition:.3s;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  body.hellfire{--gold:#ff3b1a;--ember:#ff2a00;--ember2:#ff5a2a}
+  body.hellfire #embers{filter:hue-rotate(-12deg) saturate(1.5)}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Forge Launcher</h1>
-    <p>Welcome to the Forge Launcher. Future features will appear here.</p>
-    <button id="testBtn">Test</button>
-  </div>
-  <script>
-    const { ipcRenderer } = require('electron');
-    document.getElementById('testBtn').addEventListener('click', () => {
-      ipcRenderer.send('test-message', 'Button clicked');
-    });
-  </script>
+<canvas id="embers"></canvas>
+<div class="wrap">
+  <header>
+    <h1>THE <span class="spark">FORGE</span> LAUNCHER</h1>
+    <div class="sub">Steel · Fire · Sanctuary</div>
+  </header>
+  <main id="catalog"></main>
+  <footer>
+    <div class="left"><span><span class="dot"></span><span id="meta">forging…</span></span></div>
+    <div><button id="reload">↻ Reload</button> <button id="quit">⏻ Quit</button></div>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="catalog.js"></script>
+<script>
+const F = window.forge;
+const toast = (msg) => {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), 1800);
+};
+
+function tileEl(item){
+  const el = document.createElement('div');
+  el.className = 'tile';
+  const tag = item.kind === 'portal' ? 'open' : item.kind === 'external' ? 'browser' : 'run';
+  el.innerHTML = `<span class="kindtag">${tag}</span>
+    <div class="ico">${item.icon||'◆'}</div>
+    <div class="ttl">${item.title}</div>
+    <div class="desc">${item.desc||''}</div>`;
+  el.addEventListener('click', async () => {
+    try{
+      if(item.kind==='portal'){ await F.openPortal({url:item.url,title:item.title}); toast('⚒ Opening '+item.title); }
+      else if(item.kind==='external'){ await F.openExternal(item.url); toast('↗ '+item.title+' in browser'); }
+      else if(item.kind==='local'){ const r=await F.launchLocal({cmd:item.cmd,args:item.args,cwd:item.cwd});
+        toast(r.ok ? '🔥 Launched '+item.title : '✗ '+(r.error||'failed')); }
+    }catch(e){ toast('✗ '+e.message); }
+  });
+  return el;
+}
+
+function render(){
+  const root = document.getElementById('catalog');
+  root.innerHTML='';
+  (window.FORGE_CATALOG||[]).forEach(sec=>{
+    const s=document.createElement('div'); s.className='section';
+    s.innerHTML=`<h2>${sec.section}</h2>`+(sec.blurb?`<div class="blurb">${sec.blurb}</div>`:'');
+    const g=document.createElement('div'); g.className='grid';
+    sec.items.forEach(it=>g.appendChild(tileEl(it)));
+    s.appendChild(g); root.appendChild(s);
+  });
+}
+
+document.getElementById('reload').addEventListener('click', ()=>location.reload());
+document.getElementById('quit').addEventListener('click', ()=>F.quit());
+
+(async()=>{
+  try{ const m=await F.meta();
+    document.getElementById('meta').textContent =
+      `forge v${m.version} · ${m.host} · electron ${m.electron} · node ${m.node}`;
+  }catch{ document.getElementById('meta').textContent='forge launcher'; }
+})();
+
+render();
+
+// ── Easter egg: Konami code → hellfire mode ──
+const KON=[38,38,40,40,37,39,37,39,66,65]; let ki=0;
+window.addEventListener('keydown',e=>{
+  ki = (e.keyCode===KON[ki]) ? ki+1 : 0;
+  if(ki===KON.length){ document.body.classList.toggle('hellfire'); toast('🔥 HELLFIRE MODE'); ki=0; }
+});
+
+// ── Ember particle backdrop ──
+const cv=document.getElementById('embers'), cx=cv.getContext('2d');
+let W,H,parts;
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+function seed(){parts=Array.from({length:70},()=>newP());}
+function newP(){return{x:Math.random()*W,y:H+Math.random()*H,r:Math.random()*2+.6,
+  vy:-(Math.random()*.6+.2),vx:(Math.random()-.5)*.3,a:Math.random()*.6+.2};}
+function tick(){
+  cx.clearRect(0,0,W,H);
+  for(const p of parts){
+    p.y+=p.vy; p.x+=p.vx; p.a-=0.0012;
+    if(p.y<-10||p.a<=0){Object.assign(p,newP())}
+    const hell=document.body.classList.contains('hellfire');
+    cx.beginPath(); cx.arc(p.x,p.y,p.r,0,7);
+    cx.fillStyle=`rgba(${hell?255:255},${hell?60:140},${hell?10:40},${p.a})`;
+    cx.shadowBlur=8; cx.shadowColor='rgba(255,110,30,.8)'; cx.fill();
+  }
+  requestAnimationFrame(tick);
+}
+addEventListener('resize',()=>{resize();seed();});
+resize(); seed(); tick();
+</script>
 </body>
 </html>
