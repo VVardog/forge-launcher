@@ -1,4 +1,7 @@
+# Dependencies
 node_modules/
+
+# Build output — binaries live in Releases, not the repo
 dist/
 build/
 out/
@@ -6,5 +9,14 @@ out/
 *.AppImage
 *.snap
 *.blockmap
+*.zip
+
+# Logs / scratch
+*.log
 build.log
 .pnpm-store/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
