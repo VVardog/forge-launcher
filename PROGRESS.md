@@ -23,3 +23,4 @@
 *All steps are logged in `memory/forge_launcher_ideas.md` and tracked via cron reminders.*
 
 2026-05-26 11:55 AM EDT – Heartbeat check: progress on track, next steps unchanged.
+- **2026-05-29 (Kai cleanup + fix)** — Consolidated to single sandbox location `~/forge-box/launcher/`. Fixed Electron launch: chrome-sandbox SUID error (was misdiagnosed as a Wine issue) resolved with `--no-sandbox` flag in `npm start`. **Verified: app launches headless under xvfb, window loads index.html, title="Forge Launcher".** Windows/Wine installer path PARKED — Linux/Electron first. Next: build out the Diablo-themed UI per FORGE-LAUNCHER.md.

@@ -5,10 +5,10 @@
   "main": "src/main.js",
   "scripts": {
     "dist:win": "electron-builder --win",
-    "start": "electron .",
+    "start": "electron . --no-sandbox",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "dist:win": "electron-builder --win"
+    "start:sandboxed": "electron ."
   },
   "author": "Cain 🩸 <cain@cain.tail17d57c.ts.net>",
   "license": "MIT",
@@ -16,7 +16,11 @@
     "electron": "^31.0.0",
     "electron-builder": "^24.13.3"
   },
-  "files": ["src/**", "assets/**", "package.json"],
+  "files": [
+    "src/**",
+    "assets/**",
+    "package.json"
+  ],
   "build": {
     "icon": "assets/icon-256.png",
     "appId": "com.vvardog.forgelauncher",
@@ -25,7 +29,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "publisherName": "VVardog",
@@ -42,6 +48,8 @@
     "directories": {
       "output": "dist"
     },
-    "linux": { "icon": "assets/icon-256.png" }
+    "linux": {
+      "icon": "assets/icon-256.png"
     }
+  }
 }
