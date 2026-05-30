@@ -10,7 +10,7 @@
     "dist": "electron-builder",
     "start:sandboxed": "electron ."
   },
-  "author": "Cain 🩸 <cain@cain.tail17d57c.ts.net>",
+  "author": "Cain \ud83e\ude78 <cain@cain.tail17d57c.ts.net>",
   "license": "MIT",
   "devDependencies": {
     "electron": "^31.0.0",
@@ -43,7 +43,8 @@
       "allowElevation": true,
       "allowToChangeInstallationDirectory": false,
       "createDesktopShortcut": true,
-      "shortcutName": "Forge Launcher"
+      "shortcutName": "Forge Launcher",
+      "artifactName": "Forge-Launcher-Setup-${version}.${ext}"
     },
     "directories": {
       "output": "dist"
