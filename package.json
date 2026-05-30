@@ -1,6 +1,6 @@
 {
   "name": "forge-launcher",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A themed, modular launcher for the Forge workflow with Diablo-style UI.",
   "main": "src/main.js",
   "scripts": {
