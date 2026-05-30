@@ -14,7 +14,7 @@ A themed desktop launcher that houses everything you reach for — your live web
 
 It opens two kinds of things:
 
-- **🌀 Portals** — open a site *inside* a framed Forge window (MauriceTech, the arcade, Spiral).
+- **🌀 Portals** — open a site *inside* a framed Forge window (MauriceTech, the arcade).
 - **↗️ External** — hand a URL to your system browser (GitHub, Grafana, the Gateway UI, Kai Toolbox).
 - _(no local program execution — this build only opens web pages, so it is safe to share with anyone.)_
 

@@ -20,8 +20,6 @@ const childWindows = new Set();
 const PORTAL_ALLOWLIST = [
   "https://mauricetech.net",
   "https://www.mauricetech.net",
-  "https://spiralinteriorspaces.com",
-  "https://www.spiralinteriorspaces.com",
 ];
 
 function isAllowedPortal(url) {
