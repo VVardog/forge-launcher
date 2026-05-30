@@ -1,13 +1,41 @@
 // Forge Launcher — main process 🔨🩸
-// A themed hub that houses the MauriceTech site, web tools, the arcade, and local tools.
-const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron');
-const path = require('path');
-const { spawn } = require('child_process');
+// A themed hub for the MauriceTech arcade and sites. Distributable build:
+// it ONLY opens web content (embedded portal or the system browser).
+// It deliberately CANNOT run local programs — no arbitrary command execution,
+// nothing for antivirus to flag, safe to hand to anyone.
+const { app, BrowserWindow, ipcMain, shell, Menu } = require("electron");
+const path = require("path");
 
-app.commandLine.appendSwitch('no-sandbox'); // Linux headless / sandbox-perm safety
+// Only disable the Chromium sandbox on Linux (headless/dev servers hit a
+// chrome-sandbox SUID abort). On Windows/macOS the sandbox stays ON.
+if (process.platform === "linux") {
+  app.commandLine.appendSwitch("no-sandbox");
+}
 
 let mainWindow = null;
 const childWindows = new Set();
+
+// Only these origins may be opened as embedded portals. Anything else is
+// handed to the system browser instead. Keeps the in-app window on our sites.
+const PORTAL_ALLOWLIST = [
+  "https://mauricetech.net",
+  "https://www.mauricetech.net",
+  "https://spiralinteriorspaces.com",
+  "https://www.spiralinteriorspaces.com",
+];
+
+function isAllowedPortal(url) {
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return false;
+    return PORTAL_ALLOWLIST.some((base) => {
+      const b = new URL(base);
+      return u.host === b.host;
+    });
+  } catch {
+    return false;
+  }
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -15,74 +43,76 @@ function createWindow() {
     height: 780,
     minWidth: 900,
     minHeight: 620,
-    backgroundColor: '#0a0705',
-    title: 'Forge Launcher',
-    icon: path.join(__dirname, '..', 'assets', 'icon-256.png'),
+    backgroundColor: "#0a0705",
+    title: "Forge Launcher",
+    icon: path.join(__dirname, "..", "assets", "icon-256.png"),
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
-      preload: path.join(__dirname, 'preload.js'),
+      sandbox: true,
+      preload: path.join(__dirname, "preload.js"),
     },
   });
   Menu.setApplicationMenu(null);
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
-  mainWindow.on('closed', () => { mainWindow = null; });
+  mainWindow.loadFile(path.join(__dirname, "index.html"));
+  mainWindow.on("closed", () => { mainWindow = null; });
 }
 
-// Open a web target inside a framed child window (the "portal").
+// Open an allowlisted web target inside a framed child window (the "portal").
+// Non-allowlisted URLs fall back to the system browser for safety.
 function openPortal({ url, title }) {
+  if (!isAllowedPortal(url)) {
+    if (/^https:\/\//.test(url || "")) { shell.openExternal(url); return { ok: true, external: true }; }
+    return { ok: false, error: "blocked" };
+  }
   const win = new BrowserWindow({
     width: 1280,
     height: 860,
-    backgroundColor: '#0a0705',
-    title: title || 'Forge Portal',
+    backgroundColor: "#0a0705",
+    title: title || "Forge Portal",
     autoHideMenuBar: true,
     parent: mainWindow || undefined,
-    webPreferences: { contextIsolation: true, nodeIntegration: false },
+    webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+    },
+  });
+  // Hard-stop any attempt to navigate the portal to a non-web scheme.
+  win.webContents.on("will-navigate", (e, target) => {
+    if (!/^https?:\/\//.test(target)) e.preventDefault();
+  });
+  win.webContents.setWindowOpenHandler(({ url: u }) => {
+    if (/^https?:\/\//.test(u)) shell.openExternal(u);
+    return { action: "deny" };
   });
   win.loadURL(url);
   childWindows.add(win);
-  win.on('closed', () => childWindows.delete(win));
+  win.on("closed", () => childWindows.delete(win));
   return { ok: true };
 }
 
-// Launch a local program / shell command (a "tool").
-function launchLocal({ cmd, args, cwd }) {
-  try {
-    const child = spawn(cmd, args || [], {
-      cwd: cwd || process.env.HOME,
-      detached: true,
-      stdio: 'ignore',
-      shell: !args, // if no args array given, treat cmd as a shell line
-    });
-    child.unref();
-    return { ok: true, pid: child.pid };
-  } catch (e) {
-    return { ok: false, error: String(e.message || e) };
-  }
-}
-
 app.whenReady().then(() => {
-  // IPC handlers — the renderer asks, the main process acts.
-  ipcMain.handle('forge:openPortal', (_e, payload) => openPortal(payload || {}));
-  ipcMain.handle('forge:openExternal', (_e, url) => { shell.openExternal(url); return { ok: true }; });
-  ipcMain.handle('forge:launchLocal', (_e, payload) => launchLocal(payload || {}));
-  ipcMain.handle('forge:quit', () => { app.quit(); return { ok: true }; });
-  ipcMain.handle('forge:meta', () => ({
+  ipcMain.handle("forge:openPortal", (_e, payload) => openPortal(payload || {}));
+  ipcMain.handle("forge:openExternal", (_e, url) => {
+    if (/^https?:\/\//.test(url || "")) { shell.openExternal(url); return { ok: true }; }
+    return { ok: false, error: "blocked" };
+  });
+  ipcMain.handle("forge:quit", () => { app.quit(); return { ok: true }; });
+  ipcMain.handle("forge:meta", () => ({
     version: app.getVersion(),
     platform: process.platform,
     electron: process.versions.electron,
     node: process.versions.node,
-    host: require('os').hostname(),
   }));
 
   createWindow();
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
 });

@@ -12,11 +12,11 @@
 
 A themed desktop launcher that houses everything you reach for — your live websites, the arcade, fleet dashboards, dev tools, and local programs — behind one **Diablo / forge-styled** front door. Steel, fire, and a wall of glowing rune tiles.
 
-It launches three kinds of things:
+It opens two kinds of things:
 
 - **🌀 Portals** — open a site *inside* a framed Forge window (MauriceTech, the arcade, Spiral).
 - **↗️ External** — hand a URL to your system browser (GitHub, Grafana, the Gateway UI, Kai Toolbox).
-- **🔥 Local** — spawn a program or shell command on the machine (terminal, file manager, editor).
+- _(no local program execution — this build only opens web pages, so it is safe to share with anyone.)_
 
 Built for the fleet: a single window that gathers the whole operation — and one file (`catalog.js`) that defines all of it.
 

@@ -114,7 +114,7 @@
   <main id="catalog"></main>
   <footer>
     <div class="left"><span><span class="dot"></span><span id="meta">forging…</span></span></div>
-    <div><button id="reload">↻ Reload</button> <button id="settings">⚙ Settings</button> <button id="quit">⏻ Quit</button></div>
+    <div><button id="reload">↻ Reload</button> <button id="quit">⏻ Quit</button></div>
   </footer>
 </div>
 <div class="toast" id="toast"></div>
@@ -131,7 +131,7 @@ const toast = (msg) => {
 function tileEl(item){
   const el = document.createElement('div');
   el.className = 'tile';
-  const tag = item.kind === 'portal' ? 'open' : item.kind === 'external' ? 'browser' : 'run';
+  const tag = item.kind === 'external' ? 'browser' : 'open';
   el.innerHTML = `<span class="kindtag">${tag}</span>
     <div class="ico">${item.icon||'◆'}</div>
     <div class="ttl">${item.title}</div>
@@ -140,8 +140,6 @@ function tileEl(item){
     try{
       if(item.kind==='portal'){ await F.openPortal({url:item.url,title:item.title}); toast('⚒ Opening '+item.title); }
       else if(item.kind==='external'){ await F.openExternal(item.url); toast('↗ '+item.title+' in browser'); }
-      else if(item.kind==='local'){ const r=await F.launchLocal({cmd:item.cmd,args:item.args,cwd:item.cwd});
-        toast(r.ok ? '🔥 Launched '+item.title : '✗ '+(r.error||'failed')); }
     }catch(e){ toast('✗ '+e.message); }
   });
   return el;
@@ -200,11 +198,5 @@ function tick(){
 addEventListener('resize',()=>{resize();seed();});
 resize(); seed(); tick();
 </script>
-<!-- Settings Modal -->
-<div id="settings-modal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0a0705;color:#cbb89a;padding:20px;border:1px solid var(--line);z-index:100;max-width:90%;max-height:80%;overflow:auto;">
-  <h2 style="margin-top:0;">Launcher Settings</h2>
-  <label><input type="checkbox" id="plugin-toggle"/> Enable Plugins</label><br/>
-  <button id="save-settings">Save</button> <button id="close-settings">Close</button>
-</div>
 </body>
 </html>
